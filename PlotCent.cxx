@@ -47,9 +47,11 @@ void PlotCent() {
     lat->SetTextColor(2);
     lat->SetTextFont(64);
     lat->SetTextSize(12);
-    // pMode: 0, 1, 2 for Netp, Pro and Pbar
-    // cMode: 0 for cumulants and 1 for factorial cumulants
-    // sMode: 
+
+    double Npart[9] = {
+        339, 289, 224, 158, 109, 71, 44, 25, 13
+    };
+
     sMode_t sMode = 0; 
     for (cMode_t cMode=0; cMode<1; cMode++) {
         for (pMode_t pMode=0; pMode<3; pMode++) {
@@ -57,6 +59,9 @@ void PlotCent() {
             pm->Init(nf, fNames, mcolor, mstyle, msize, pstyle, pMode, cMode, sMode);
             pm->SetDefaultLabelLocation();
             pm->ReadGraph();
+            for (int i=0; i<nf; i++) { // if some of the files are using other Npart, should not use this loop. Set them separately instead!
+                pm->SetGraphXArray(9, 0, Npart);
+            }
             pm->SetNp(9);
             pm->SetUrQMD(0);
             // pm->SetLabelLocationX(5, 0.675); 
