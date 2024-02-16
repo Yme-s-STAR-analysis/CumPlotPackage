@@ -60,7 +60,7 @@ void PlotCent() {
             pm->SetDefaultLabelLocation();
             pm->ReadGraph();
             for (int i=0; i<nf; i++) { // if some of the files are using other Npart, should not use this loop. Set them separately instead!
-                pm->SetGraphXArray(9, 0, Npart);
+                pm->SetGraphXArray(9, i, Npart);
             }
             pm->SetNp(9);
             pm->SetUrQMD(0);
