@@ -128,11 +128,11 @@ void PlotManager::ReadGraph() {
     for (int i=0; i<nf; i++) {
         for (int j=0; j<nc; j++) {
             if (pMode == 0 && j > 6) { break; }
-            if (!legacy && pMode == 0 && cMode == 0 && j == 4) { // netp, R21->R2s
+            if (!legacy && pMode == 0 && cMode == 0 && j == 5) { // netp, R21->R2s
                 tfs[i]->GetObject(
                     Form("%s_R2s", pName), tgs[i][j]
                 );
-            } else if (!legacy && cMode == 0 && j == 5) { // any, R21->R2s
+            } else if (!legacy && cMode == 0 && j == 6) { // any, R21->R2s
                 tfs[i]->GetObject(
                     Form("%s_R31", pName), tgs[i][j]
                 );
@@ -366,9 +366,9 @@ void PlotManager::Plot() {
 
     share_lat->SetTextAngle(0);
     for (int ic=0; ic<nc; ic++) {
-        if (!legacy && pMode == 0 && cMode == 0 && ic == 4) { // netp, R21->R2s
+        if (!legacy && pMode == 0 && cMode == 0 && ic == 5) { // netp, R21->R2s
             share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{2}/<p+#bar{p}>");
-        } else if (!legacy && cMode == 0 && ic == 4) { // any, R32->R31
+        } else if (!legacy && cMode == 0 && ic == 6) { // any, R32->R31
             share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{3}/C_{1}");
         } else {
             share_lat->DrawLatexNDC(labelX[ic], labelY[ic], labels[cMode][ic]);
