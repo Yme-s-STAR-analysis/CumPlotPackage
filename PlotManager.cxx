@@ -132,7 +132,7 @@ void PlotManager::ReadGraph() {
                 tfs[i]->GetObject(
                     Form("%s_R2s", pName), tgs[i][j]
                 );
-            } elseif (!legacy && cMode == 0 && j == 5) { // any, R21->R2s
+            } else if (!legacy && cMode == 0 && j == 5) { // any, R21->R2s
                 tfs[i]->GetObject(
                     Form("%s_R31", pName), tgs[i][j]
                 );
