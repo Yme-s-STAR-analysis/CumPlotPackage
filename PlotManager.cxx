@@ -367,7 +367,7 @@ void PlotManager::Plot() {
     share_lat->SetTextAngle(0);
     for (int ic=0; ic<nc; ic++) {
         if (!legacy && pMode == 0 && cMode == 0 && ic == 4) { // netp, R21->R2s
-            share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{2}/#left<p+#bar{p}#right>");
+            share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{2}/<p+#bar{p}>");
         } else if (!legacy && cMode == 0 && ic == 4) { // any, R32->R31
             share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{3}/C_{1}");
         } else {
