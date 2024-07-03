@@ -72,6 +72,14 @@ void PlotManager::Init(int nfiles, const char** fnames, int* mcolor, int* mstyle
     c->Clear();
     SetDefaultLabelLocation();
     share_lat->SetTextFont(23);
+
+    legacy = false;
+}
+
+// legacy = false: new labels
+void PlotManager::Init(int nfiles, const char** fnames, int* mcolor, int* mstyle, double* msize, const char** pstyle, pMode_t pMode, cMode_t cMode, sMode_t sMode, bool legacy) {
+    Init(nfiles, fnames, mcolor, mstyle, msize, pstyle, pMode, cMode, sMode);
+    this->legacy = legacy;
 }
 
 void PlotManager::SetLatexMode(bool des) {
@@ -117,11 +125,23 @@ void PlotManager::ReadGraph() {
         {"C1", "C3", "C2", "C4", "R21", "R32", "R42"},
         {"k1", "k3", "k2", "k4", "k21", "k31", "k41"}
     };
+    const char* 
     for (int i=0; i<nf; i++) {
         for (int j=0; j<nc; j++) {
-            tfs[i]->GetObject(
-                Form("%s_%s", pName, tgnames[cMode][j]), tgs[i][j]
-            );
+            if (pMode == 0 && j >= 6) { break; }
+            if (!legacy && pMode == 0 && cMode == 0 && j == 4) { // netp, R21->R2s
+                tfs[i]->GetObject(
+                    Form("%s_R2s", pName), tgs[i][j]
+                );
+            } elseif (!legacy && cMode == 0 && j == 5) { // any, R21->R2s
+                tfs[i]->GetObject(
+                    Form("%s_R31", pName), tgs[i][j]
+                );
+            } else {
+                tfs[i]->GetObject(
+                    Form("%s_%s", pName, tgnames[cMode][j]), tgs[i][j]
+                );
+            }
             tgs[i][j]->SetMarkerColor(mcolor[i]);
             tgs[i][j]->SetLineColor(mcolor[i]);
             tgs[i][j]->SetMarkerStyle(mstyle[i]);
@@ -347,7 +367,13 @@ void PlotManager::Plot() {
 
     share_lat->SetTextAngle(0);
     for (int ic=0; ic<nc; ic++) {
-        share_lat->DrawLatexNDC(labelX[ic], labelY[ic], labels[cMode][ic]);
+        if (!legacy && pMode == 0 && cMode == 0 && j == 4) { // netp, R21->R2s
+            share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{2}/#left<p+#bar{p}#right>");
+        } else if (!legacy && cMode == 0 && j == 4) { // any, R32->R31
+            share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{3}/C_{1}");
+        } else {
+            share_lat->DrawLatexNDC(labelX[ic], labelY[ic], labels[cMode][ic]);
+        }
     }
 
     TLegend* leg = new TLegend(0.785, 0.060, 0.945, 0.280);

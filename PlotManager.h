@@ -46,10 +46,14 @@ class PlotManager {
         char* leg_text[FILEMAX];
         char* leg_style[FILEMAX];
 
+        bool legacy;
+
     public:
         PlotManager();
         ~PlotManager() {}
+        void SetLegacy(bool val) { legacy = val; }
         void Init(int, const char**, int*, int*, double*, const char**, pMode_t, cMode_t, sMode_t);
+        void Init(int, const char**, int*, int*, double*, const char**, pMode_t, cMode_t, sMode_t, bool);
         void SetLatexMode(bool);
         void SetDefaultLabelLocation();
         void SetLabelLocationX(int, double);
