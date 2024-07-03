@@ -2,9 +2,9 @@
 
 Author: yghuang
 
-Version: 2.0
+Version: 2.1
 
-Date: 16.02.2024
+Date: 04.07.2024
 
 ## Quick Start
 
@@ -38,7 +38,11 @@ Date: 16.02.2024
 
 * Replace the path to root files you want to compare and run the macro.
 
-## Patch Note:
+## Patch Note
+
+04.07.2024 by yghuang (v2.1):
+
+> Add legacy option: turn off to draw new quantities (C2/ppb and C3/C1). By default is false
 
 16.02.2024 by yghuang (v2.0):
 
