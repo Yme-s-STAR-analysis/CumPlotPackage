@@ -38,7 +38,7 @@ void PlotCent() {
         "epl", "e[]"
     };
 
-    const char* sname = "Centpdf";
+    const char* sname = "Cent.pdf";
 
     TCanvas* cover = new TCanvas();
     cover->Print(Form("%s(", sname));
@@ -48,9 +48,10 @@ void PlotCent() {
     lat->SetTextFont(64);
     lat->SetTextSize(12);
 
-    double Npart[9] = {
-        339, 289, 224, 158, 109, 71, 44, 25, 13
-    };
+    // now Npart is determined when do the calculation (CBWC)
+    // double Npart[9] = {
+    //     339, 289, 224, 158, 109, 71, 44, 25, 13
+    // };
 
     sMode_t sMode = 0; 
     for (cMode_t cMode=0; cMode<1; cMode++) {
@@ -59,9 +60,9 @@ void PlotCent() {
             pm->Init(nf, fNames, mcolor, mstyle, msize, pstyle, pMode, cMode, sMode);
             pm->SetDefaultLabelLocation();
             pm->ReadGraph();
-            for (int i=0; i<nf; i++) { // if some of the files are using other Npart, should not use this loop. Set them separately instead!
-                pm->SetGraphXArray(9, i, Npart);
-            }
+            // for (int i=0; i<nf; i++) { // if some of the files are using other Npart, should not use this loop. Set them separately instead!
+            //     pm->SetGraphXArray(9, i, Npart);
+            // }
             pm->SetNp(9);
             pm->SetUrQMD(0);
             // pm->SetLabelLocationX(5, 0.675); 
