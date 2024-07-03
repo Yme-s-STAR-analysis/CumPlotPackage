@@ -125,7 +125,6 @@ void PlotManager::ReadGraph() {
         {"C1", "C3", "C2", "C4", "R21", "R32", "R42"},
         {"k1", "k3", "k2", "k4", "k21", "k31", "k41"}
     };
-    const char* 
     for (int i=0; i<nf; i++) {
         for (int j=0; j<nc; j++) {
             if (pMode == 0 && j >= 6) { break; }
@@ -367,9 +366,9 @@ void PlotManager::Plot() {
 
     share_lat->SetTextAngle(0);
     for (int ic=0; ic<nc; ic++) {
-        if (!legacy && pMode == 0 && cMode == 0 && j == 4) { // netp, R21->R2s
+        if (!legacy && pMode == 0 && cMode == 0 && ic == 4) { // netp, R21->R2s
             share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{2}/#left<p+#bar{p}#right>");
-        } else if (!legacy && cMode == 0 && j == 4) { // any, R32->R31
+        } else if (!legacy && cMode == 0 && ic == 4) { // any, R32->R31
             share_lat->DrawLatexNDC(labelX[ic], labelY[ic], "C_{3}/C_{1}");
         } else {
             share_lat->DrawLatexNDC(labelX[ic], labelY[ic], labels[cMode][ic]);
