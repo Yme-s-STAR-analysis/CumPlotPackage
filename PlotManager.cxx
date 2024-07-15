@@ -127,7 +127,6 @@ void PlotManager::ReadGraph() {
     };
     for (int i=0; i<nf; i++) {
         for (int j=0; j<nc; j++) {
-            if (pMode == 0 && j > 6) { break; }
             if (!legacy && pMode == 0 && cMode == 0 && j == 4) { // netp, R21->R2s
                 tfs[i]->GetObject(
                     Form("%s_R2s", pName), tgs[i][j]
