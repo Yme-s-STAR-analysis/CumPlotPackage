@@ -2,9 +2,9 @@
 
 Author: yghuang
 
-Version: 2.1
+Version: 2.2
 
-Date: 04.07.2024
+Date: 15.07.2024
 
 ## Quick Start
 
@@ -40,10 +40,14 @@ Date: 04.07.2024
 
 ## Patch Note
 
+15.07.2024 by yghuang (v2.2):
+
+> Make some minor changes on text stuff
+
 04.07.2024 by yghuang (v2.1):
 
 > Add legacy option: turn off to draw new quantities (C2/ppb and C3/C1). By default is false
 
 16.02.2024 by yghuang (v2.0):
 
-> Completed version with a nice demo.
+> Completed version with a nice demo
