@@ -59,9 +59,9 @@ class GraphCollection {
     double GetY1() { return y1; }
     double GetY2() { return y2; }
 
-    void SetFrameAxisRange(TH1* frame) {
+    void SetFrameAxisRange(TH1* frame, double fac=1.6) {
         // set y1 and y2 with proper range
-        FindProperAxisRange();
+        FindProperAxisRange(fac);
         frame->GetYaxis()->SetRangeUser(y1, y2);
     }
     void SetFrameAxisRange(TH1* frame, double y1, double y2) {
