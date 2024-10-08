@@ -2,9 +2,9 @@
 
 Author: yghuang
 
-Version: 2.2
+Version: 2.3
 
-Date: 15.07.2024
+Date: 08.10.2024
 
 ## Quick Start
 
@@ -22,7 +22,7 @@ Date: 15.07.2024
 
 * `sname` is the save name, like `Cent.pdf`
 
-* `sMode` should be 0, 1, 2 or 3. 0 for centrality scan, 1 for rapidity scan and 3 for pT scan. 2 is shifting rapidity scan.
+* `sMode` should be 0 to 5. 0 for centrality scan, 1 and 2 for rapidity scan, and 3 and 4 for pT scan. 5 is special one which won't be used in common case.
 
 * `pMode` 0, 1, 2 for net-proton, proton and antiproton.
 
@@ -39,6 +39,12 @@ Date: 15.07.2024
 * Replace the path to root files you want to compare and run the macro.
 
 ## Patch Note
+
+08.10.2024 by yghuang (v2.3):
+
+1. Support accumulative and differential pT and y scan
+
+2. Additional array `cbwca`, if true, the ratios will be directly from CBWC instead of ratios of CBWCorrected cumulants
 
 15.07.2024 by yghuang (v2.2):
 
