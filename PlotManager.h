@@ -23,6 +23,7 @@ class PlotManager {
         int mcolor[FILEMAX];
         int mstyle[FILEMAX];
         double msize[FILEMAX];
+        bool cbwca[FILEMAX];
         int np;
         char* pName;
         char* pstyle[FILEMAX];
@@ -47,13 +48,13 @@ class PlotManager {
         char* leg_style[FILEMAX];
 
         bool legacy;
+        double gcFac;
 
     public:
         PlotManager();
         ~PlotManager() {}
         void SetLegacy(bool val) { legacy = val; }
-        void Init(int, const char**, int*, int*, double*, const char**, pMode_t, cMode_t, sMode_t);
-        void Init(int, const char**, int*, int*, double*, const char**, pMode_t, cMode_t, sMode_t, bool);
+        void Init(int nfiles, const char** fnames, bool* cbwca, int* mcolor, int* mstyle, double* msize, const char** pstyle, pMode_t pMode, cMode_t cMode, sMode_t sMode, bool legacy=false);
         void SetLatexMode(bool);
         void SetDefaultLabelLocation();
         void SetLabelLocationX(int, double);
@@ -70,6 +71,7 @@ class PlotManager {
         void Plot();
         void AddLegend(const char*, double);
         void Save(const char*);
+        void SetGcFactor(double val) { gcFac = val; }
 
 };
 

@@ -23,9 +23,10 @@ PlotManager::PlotManager() {
     tl->SetLineColor(2);
     tl->SetLineStyle(2);
     share_lat = new TLatex();
+    gcFac = 1.6;
 }
 
-void PlotManager::Init(int nfiles, const char** fnames, int* mcolor, int* mstyle, double* msize, const char** pstyle, pMode_t pMode, cMode_t cMode, sMode_t sMode) {
+void PlotManager::Init(int nfiles, const char** fnames, bool* cbwca, int* mcolor, int* mstyle, double* msize, const char** pstyle, pMode_t pMode, cMode_t cMode, sMode_t sMode, bool legacy) {
     nf = nfiles;
     for (int i=0; i<nf; i++) {
         std::cout << "[LOG] - Init: Loading File: " << fnames[i] << std::endl;
@@ -33,6 +34,7 @@ void PlotManager::Init(int nfiles, const char** fnames, int* mcolor, int* mstyle
         this->mcolor[i] = mcolor[i];
         this->mstyle[i] = mstyle[i];
         this->msize[i] = msize[i];
+        this->cbwca[i] = cbwca[i];
         this->pstyle[i] = const_cast<char*>(pstyle[i]);
     }
     if (pMode == 0) {
@@ -51,19 +53,24 @@ void PlotManager::Init(int nfiles, const char** fnames, int* mcolor, int* mstyle
         exit(-1);
     }
     this->cMode = cMode;
-    if (sMode == 0) {
+    if (sMode == 0) { // centrality dependence
         x1 = -20;
         x2 = 390;
-    } else if (sMode == 1) {
+    } else if (sMode == 1) { // accumulative rapidity scan
+        x1 = -0.03;
+        x2 = 0.73;
+    } else if (sMode == 2) { // differential rapidity scan
         x1 = -0.1;
-        // x2 = 0.9;
         x2 = 0.7;
-    } else if (sMode == 2) {
-        x1 = 0.1;
-        x2 = 0.6;
-    } else if (sMode == 3) {
+    } else if (sMode == 3) { // accumulative pT scan
         x1 = 0.65;
         x2 = 2.15;
+    } else if (sMode == 4) { // differential pT scan
+        x1 = 0.27;
+        x2 = 2.13;
+    } else if (sMode == 5) { // reverse accumulative scan (special, incommon)
+        x1 = -0.2;
+        x2 = 1.6;
     } else {
         std::cout << "[ERROR] - Init: Invalid sMode.\n";
         exit(-1);
@@ -73,14 +80,9 @@ void PlotManager::Init(int nfiles, const char** fnames, int* mcolor, int* mstyle
     SetDefaultLabelLocation();
     share_lat->SetTextFont(23);
 
-    legacy = false;
-}
-
-// legacy = false: new labels
-void PlotManager::Init(int nfiles, const char** fnames, int* mcolor, int* mstyle, double* msize, const char** pstyle, pMode_t pMode, cMode_t cMode, sMode_t sMode, bool legacy) {
-    Init(nfiles, fnames, mcolor, mstyle, msize, pstyle, pMode, cMode, sMode);
     this->legacy = legacy;
 }
+
 
 void PlotManager::SetLatexMode(bool des) {
     if (des) { // for description
@@ -128,17 +130,41 @@ void PlotManager::ReadGraph() {
     for (int i=0; i<nf; i++) {
         for (int j=0; j<nc; j++) {
             if (!legacy && pMode == 0 && cMode == 0 && j == 4) { // netp, R21->R2s
-                tfs[i]->GetObject(
-                    Form("%s_R2s", pName), tgs[i][j]
-                );
+                if (cbwca[i]) {
+                    tfs[i]->GetObject(
+                        Form("%s_R2sr", pName), tgs[i][j]
+                    );
+                } else {
+                    tfs[i]->GetObject(
+                        Form("%s_R2s", pName), tgs[i][j]
+                    );
+                }
             } else if (!legacy && cMode == 0 && j == 5) { // any, R21->R2s
-                tfs[i]->GetObject(
-                    Form("%s_R31", pName), tgs[i][j]
-                );
+                if (cbwca[i]) {
+                    tfs[i]->GetObject(
+                        Form("%s_R31r", pName), tgs[i][j]
+                    );
+                } else {
+                    tfs[i]->GetObject(
+                        Form("%s_R31", pName), tgs[i][j]
+                    );
+                }
             } else {
-                tfs[i]->GetObject(
-                    Form("%s_%s", pName, tgnames[cMode][j]), tgs[i][j]
-                );
+                if (cbwca[i]) { // read Netp_R42r instead of Netp_R42
+                    if (j <= 3 || (j >=7 && j <= 10)) {
+                        tfs[i]->GetObject(
+                            Form("%s_%s", pName, tgnames[cMode][j]), tgs[i][j]
+                        );
+                    } else {
+                        tfs[i]->GetObject(
+                            Form("%s_%sr", pName, tgnames[cMode][j]), tgs[i][j]
+                        );
+                    }
+                } else {
+                    tfs[i]->GetObject(
+                        Form("%s_%s", pName, tgnames[cMode][j]), tgs[i][j]
+                    );
+                }
             }
             tgs[i][j]->SetMarkerColor(mcolor[i]);
             tgs[i][j]->SetLineColor(mcolor[i]);
@@ -301,15 +327,10 @@ void PlotManager::Plot() {
             for (int itf=0; itf<nf; itf++) {
                 gcll->Add(tgs[itf][subIdx]);
             }
-            gcll->SetFrameAxisRange(th1[subIdx]);
+            gcll->SetFrameAxisRange(th1[subIdx], gcFac);
 
             for (int itf=0; itf<nf; itf++) {
                 tgs[itf][subIdx]->Draw(pstyle[itf]);
-            }
-
-            // line y = 1 for C4/C2
-            if (subIdx == 6) {
-                tl->Draw();
             }
             subIdx ++;
         }
@@ -320,8 +341,8 @@ void PlotManager::Plot() {
     c->cd();
     SetLatexMode(false);
 
-    const char* xtitles[4] = {
-        "<N_{part}>", "|y| < y_{max}", "y_{c}", "p_{T} < P_{T}^{max}"
+    const char* xtitles[6] = {
+        "<N_{part}>", "|y| < y_{max}", "y_{c}", "p_{T}^{max} [GeV/c]", "p_{T}^{c}", "#Delta y"
     };
 
     const char* cNames[2] = { // the name 
@@ -350,7 +371,7 @@ void PlotManager::Plot() {
         },
         {
             "#kappa_{1}", "#kappa_{3}", "#kappa_{2}", "#kappa_{4}",
-            "#kapps_{2}/#kapps_{1}", "#kapps_{3}/#kapps_{1}", "#kapps_{4}/#kapps_{1}"
+            "#kappa_{2}/#kappa_{1}", "#kappa_{3}/#kappa_{1}", "#kappa_{4}/#kappa_{1}"
         }
     };
 
@@ -392,19 +413,23 @@ void PlotManager::AddLegend(const char* eng, double y) {
     };
     share_lat->DrawLatexNDC(0.775, 0.40, Form("STAR Au+Au @ %s GeV", eng));
     std::cout << "sMode:" << sMode << std::endl;
-    if (sMode == 0) { // centrality
+    if (sMode == 0) { // centrality dependenfe
         share_lat->DrawLatexNDC(0.775, 0.35, Form("%s |y| < %.1f", pNames[pMode], y));
-    } else if (sMode == 1) { // trad y scan
+    } else if (sMode == 1) { // accumulative y scan
         share_lat->DrawLatexNDC(0.775, 0.35, Form("%s |y| < y_{max}", pNames[pMode]));
-    } else if (sMode == 2) { // shift y scan
-        share_lat->DrawLatexNDC(0.775, 0.35, Form("%s |y-y_{c}| < %.2f", pNames[pMode], y));
-    } else if (sMode == 3) { // pt scan
-        share_lat->DrawLatexNDC(0.775, 0.35, Form("%s p_{T} < p_{T}^{max}", pNames[pMode]));
-    }
-    if (sMode != 3) {
         share_lat->DrawLatexNDC(0.775,0.30,"0.4 < p_{T} < 2.0 (GeV/c)");
-    } else {
+    } else if (sMode == 2) { // differential y scan
+        share_lat->DrawLatexNDC(0.775, 0.35, Form("%s |y_{c}-y|<%.2f", pNames[pMode], y));
+        share_lat->DrawLatexNDC(0.775,0.30,"0.4 < p_{T} < 2.0 (GeV/c)");
+    } else if (sMode == 3) { // accumulative pt scan
+        share_lat->DrawLatexNDC(0.775, 0.35, Form("%s p_{T} < p_{T}^{max}", pNames[pMode]));
         share_lat->DrawLatexNDC(0.775,0.30,"-0.5 < y < 0.5");
+    } else if (sMode == 4) { // differential pt scan
+        share_lat->DrawLatexNDC(0.775, 0.35, Form("%s |p_{T}^{c}-p_{T}| < %.2f", pNames[pMode], y));
+        share_lat->DrawLatexNDC(0.775,0.30,"-0.5 < y < 0.5");
+    } else if (sMode == 5) { // reverse cumulative scan (cmp with traditional one)
+        share_lat->DrawLatexNDC(0.775, 0.35, pNames[pMode]);
+        share_lat->DrawLatexNDC(0.775,0.30,"0.4 < p_{T} < 2.0 (GeV/c)");
     }
 }
 
